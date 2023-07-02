@@ -1,3 +1,9 @@
+/*Bài 1:
+a)Nhập vào ma trận xác suất kết hợp P(x,y) có cỡ MxN với M và N nhập từbàn phím. 
+Cảnh báo nếu nhập xác suất âm, yêu cầu nhập lại.
+b)Tính và hiển thịH(X), H(Y ),H(X | Y ), H(Y | X),H(X, Y ),H(Y ) − H(Y | X),I(X; Y )
+c)Tính D(P(x)||P(y)) và D(P(y)||P(x)) 
+*/
 import java.util.Scanner;
 
 public class Bai1 {
