@@ -1,7 +1,7 @@
 /*Bài 1:
 a)Nhập vào ma trận xác suất kết hợp P(x,y) có cỡ MxN với M và N nhập từbàn phím. 
 Cảnh báo nếu nhập xác suất âm, yêu cầu nhập lại.
-b)Tính và hiển thịH(X), H(Y ),H(X | Y ), H(Y | X),H(X, Y ),H(Y ) − H(Y | X),I(X; Y )
+b)Tính và hiển thị H(X), H(Y ),H(X | Y ), H(Y | X),H(X, Y ),H(Y ) − H(Y | X),I(X; Y )
 c)Tính D(P(x)||P(y)) và D(P(y)||P(x)) 
 */
 import java.util.Scanner;
@@ -10,7 +10,7 @@ public class Bai1 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        /*
+
         //Nhập kích thước ma trận xác suất
         System.out.print("Nhập số hàng (M): ");
         int M = sc.nextInt();
@@ -38,34 +38,43 @@ public class Bai1 {
             }
         }
 
-         */
 
-        //Test
+
+        /*Test
         double[][] matrix_test = {
-                {0.1, 0.05, 0.05, 0.11},
-                {0.08, 0.03, 0.12, 0.04},
-                {0.13, 0.09, 0.14, 0.06}
+                {0.08, 0.32, 0.4},
+                {0.015, 0.06, 0.075},
+                {0.005, 0.02, 0.025}
                     };
-        double entropyX = cal_Entropy_X(matrix_test);
+
+         */
+        double entropyX = cal_Entropy_X(probability_Matrix);
         System.out.println("H(X)= "+ entropyX);
 
-        double entropyY = cal_Entropy_Y(matrix_test);
+        double entropyY = cal_Entropy_Y(probability_Matrix);
         System.out.println("H(Y)= "+ entropyY);
 
-        double conditional_Entropy_X_Given_Y = cal_Conditional_Entropy_X_Given_Y(matrix_test);
+        double conditional_Entropy_X_Given_Y = cal_Conditional_Entropy_X_Given_Y(probability_Matrix);
         System.out.println("H(X|Y)= " + conditional_Entropy_X_Given_Y);
 
-        double conditional_Entropy_Y_Given_X = cal_Conditional_Entropy_Y_Given_X(matrix_test);
+        double conditional_Entropy_Y_Given_X = cal_Conditional_Entropy_Y_Given_X(probability_Matrix);
         System.out.println("H(Y|X)= " + conditional_Entropy_Y_Given_X);
 
-        double joint_Entropy = cal_Joint_Entropy(matrix_test);
+        double joint_Entropy = cal_Joint_Entropy(probability_Matrix);
         System.out.println("H(X,Y)= " + joint_Entropy);
 
-        double mutual_info = cal_Mutual_Information(entropyX, conditional_Entropy_X_Given_Y);
-        System.out.println("I(X,Y)= " + mutual_info);
+        double redundancy = cal_Redundancy(entropyY, conditional_Entropy_Y_Given_X);
+        System.out.println("H(Y) − H(Y|X)= " + String.format("%.15f", redundancy));
 
-        double KL_divergence_XY = cal_KL_divergence_XY(matrix_test);
-        System.out.println("D(X,Y)= " + mutual_info);
+        double mutual_info = cal_Mutual_Information(entropyX, conditional_Entropy_X_Given_Y);
+        System.out.println("I(X,Y) = " + String.format("%.15f", mutual_info));
+
+
+        double KL_divergence_XY = cal_KL_divergence_XY(probability_Matrix);
+        System.out.println("D(X,Y) = " + String.format("%.15f", KL_divergence_XY));
+
+        double KL_divergence_YX = cal_KL_divergence_YX(probability_Matrix);
+        System.out.println("D(Y,X) = " + String.format("%.15f", KL_divergence_YX));
 
         sc.close();
     }
@@ -196,17 +205,34 @@ public class Bai1 {
         for (int i =0; i< M; i++)
         {
             double row_Sum =0;
+            double col_sum =0;
             for(int j =0; j< N; j++){
                 row_Sum += probability_Matrix[i][j];
+                col_sum += probability_Matrix[j][i];
             }
-            for (int j=0; j<N; j++){
-                if (probability_Matrix[i][j] > 0){
-                    divergence_XY += probability_Matrix[i][j] * log2(probability_Matrix[i][j] / (row_Sum * probability_Matrix[i][j]));
-                }
-            }
+            divergence_XY += row_Sum * log2(row_Sum/ col_sum);
         }
 
         return divergence_XY;
+    }
+
+    public static double cal_KL_divergence_YX(double[][] probability_Matrix){
+        int M = probability_Matrix.length;
+        int N = probability_Matrix[0].length;
+        double divergence_YX =0;
+
+        for (int i =0; i< M; i++)
+        {
+            double row_Sum =0;
+            double col_Sum =0;
+            for(int j =0; j< N; j++){
+                row_Sum += probability_Matrix[i][j];
+                col_Sum += probability_Matrix[j][i];
+            }
+            divergence_YX += col_Sum * log2(col_Sum/ row_Sum);
+        }
+
+        return divergence_YX;
     }
 
 }
