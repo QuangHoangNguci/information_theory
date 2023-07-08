@@ -3,6 +3,27 @@ import java.util.*;
 
 public class string_Encoding
 {
+    public static double calculate_Efficiency(List<Symbol> symbols) {
+        double entropy = 0;
+        int total_Frequency = 0;
+        double avg_Length = 0;
+
+        for (Symbol symbol : symbols) {
+            total_Frequency += symbol.frequency;
+        }
+
+        for (Symbol symbol : symbols) {
+            double probability = (double) symbol.frequency / total_Frequency;
+            entropy += -probability * log2(probability);
+            avg_Length += probability * symbol.code.length();
+        }
+
+        return entropy / avg_Length;
+    }
+
+    static double log2(double n) {
+        return Math.log(n) / Math.log(2);
+    }
     static void fano_Shannon(List<Symbol> symbols, int beg, int end) {
         if (beg == end)
             return;
@@ -105,6 +126,13 @@ public class string_Encoding
         for (Symbol symbol : symbol_List) {
             System.out.println(symbol.c + " : " + symbol.frequency + " : " + symbol.code);
         }
+
+        // Tính hiệu suất mã hoá Shannon-Fano
+        double efficiency = calculate_Efficiency(symbol_List);
+        double redundancy = 1 - efficiency;
+
+        System.out.println("Hiệu suất mã hoá: " + efficiency);
+        System.out.println("Tính dư thừa: " + redundancy);
 
         sc.close();
     }
