@@ -9,8 +9,6 @@ import java.util.Scanner;
 public class Bai1 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-
         //Nhập kích thước ma trận xác suất
         System.out.print("Nhập số hàng (M): ");
         int M = sc.nextInt();
@@ -37,16 +35,12 @@ public class Bai1 {
                 probability_Matrix[i][j] = probability;
             }
         }
-
-
-
         /*Test
         double[][] matrix_test = {
                 {0.08, 0.32, 0.4},
                 {0.015, 0.06, 0.075},
                 {0.005, 0.02, 0.025}
                     };
-
          */
         double entropyX = cal_Entropy_X(probability_Matrix);
         System.out.println("H(X)= "+ entropyX);
@@ -118,7 +112,6 @@ public class Bai1 {
         entropyY *= -1;
         return entropyY;
     }
-
     public static double cal_Conditional_Entropy_X_Given_Y(double[][] probability_Matrix){
         int M = probability_Matrix.length;
         int N = probability_Matrix[0].length;
@@ -144,8 +137,6 @@ public class Bai1 {
 
         return conditional_Entropy_X_Given_Y;
     }
-
-
     public static double cal_Conditional_Entropy_Y_Given_X(double[][] probability_Matrix){
         int M = probability_Matrix.length;
         int N = probability_Matrix[0].length;
@@ -158,7 +149,6 @@ public class Bai1 {
             {
                 row_Sum += probability_Matrix[i][j];
             }
-
             double row_Entropy =0;
             for (int j=0; j< N; j++){
                 if(probability_Matrix[i][j] > 0)
@@ -234,5 +224,4 @@ public class Bai1 {
 
         return divergence_YX;
     }
-
 }
