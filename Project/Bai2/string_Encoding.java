@@ -24,7 +24,7 @@ public class string_Encoding
     static double log2(double n) {
         return Math.log(n) / Math.log(2);
     }
-    static void fano_Shannon(List<Symbol> symbols, int beg, int end) {
+    static void shannon_Fano(List<Symbol> symbols, int beg, int end) {
         if (beg == end)
             return;
 
@@ -50,8 +50,8 @@ public class string_Encoding
             symbols.get(h).code += "1";
         }
 
-        fano_Shannon(symbols, beg, y - 1);
-        fano_Shannon(symbols, y, end);
+        shannon_Fano(symbols, beg, y - 1);
+        shannon_Fano(symbols, y, end);
     }
 
     static void huffman_Encoding(List<Symbol> symbols) {
@@ -61,7 +61,7 @@ public class string_Encoding
             priority_Queue.offer(symbol);
         }
 
-        // Xây dựng cây Huffman bằng cách gộp các nút có tần số nhỏ nhất
+        // Xây dựng cây Huffman
         while (priority_Queue.size() > 1) {
             Symbol left = priority_Queue.poll();
             Symbol right = priority_Queue.poll();
@@ -72,7 +72,7 @@ public class string_Encoding
             priority_Queue.offer(merged);
         }
 
-        // Gán mã hóa Huffman cho từng ký tự
+        // Gán mã hóa Huffman
         if (!priority_Queue.isEmpty()) {
             assign_Huffman_Codes(priority_Queue.peek(), "");
         }
@@ -102,7 +102,7 @@ public class string_Encoding
         // Chuyển chuỗi đầu vào thành một mảng các ký tự
         char[] characters = input_String.toCharArray();
 
-        // Duyệt qua từng ký tự trong mảng characters
+
         for (char c : characters) {
             // Kiểm tra xem ký tự đã có trong bảng tần số chưa
             if (frequency_table.containsKey(c)) {
@@ -123,8 +123,33 @@ public class string_Encoding
         // Sắp xếp symbol_List theo tần số giảm dần
         Collections.sort(symbol_List, (a, b) -> Integer.compare(b.frequency, a.frequency));
 
+        // áp dụng mã hoá Huffman cho symbol_List
+        huffman_Encoding(symbol_List);
+
+        // in ký tự, tần số và mã hóa theo Huffman
+        System.out.println("Ký tự, tần số và mã hóa theo Huffman:");
+        for (Symbol symbol : symbol_List) {
+            System.out.println(symbol.c + " : " + symbol.frequency + " : " + symbol.code);
+        }
+        // Tạo bảng mã hóa từ danh sách các ký tự
+        Map<Character, String> encoding_Table_Huffman = new HashMap<>();
+        for (Symbol symbol : symbol_List) {
+            encoding_Table_Huffman.put(symbol.c, symbol.code);
+        }
+
+        // Mã hoá chuỗi đầu vào bằng cách thay thế mỗi ký tự bằng mã hóa tương ứng từ bảng mã hóa
+        StringBuilder encoded_String_Huffman = new StringBuilder();
+        for (char c : characters) {
+            String code = encoding_Table_Huffman.get(c);
+            encoded_String_Huffman.append(code);
+        }
+
+        // In chuỗi đã được mã hoá
+        System.out.println("Chuỗi đã được mã hoá huffman:");
+        System.out.println(encoded_String_Huffman.toString());
+
         // Áp dụng mã hoá Shannon-Fano cho symbol_List
-        fano_Shannon(symbol_List, 0, symbol_List.size() - 1);
+        shannon_Fano(symbol_List, 0, symbol_List.size() - 1);
 
         // In ký tự, tần số và mã hóa theo Shannon-Fano
         System.out.println("Ký tự, tần số và mã hóa theo Shannon-Fano:");
@@ -132,24 +157,30 @@ public class string_Encoding
             System.out.println(symbol.c + " : " + symbol.frequency + " : " + symbol.code);
         }
 
-        // Áp dụng mã hoá Huffman cho symbol_List
-        huffman_Encoding(symbol_List);
-
-        // In ký tự, tần số và mã hóa theo Huffman
-        System.out.println("Ký tự, tần số và mã hóa theo Huffman:");
+        // Tạo bảng mã hóa từ danh sách các ký tự
+        Map<Character, String> encoding_Table_Shannon = new HashMap<>();
         for (Symbol symbol : symbol_List) {
-            System.out.println(symbol.c + " : " + symbol.frequency + " : " + symbol.code);
+            encoding_Table_Shannon.put(symbol.c, symbol.code);
         }
+
+        // Mã hoá chuỗi đầu vào bằng cách thay thế mỗi ký tự bằng mã hóa tương ứng từ bảng mã hóa
+        StringBuilder encoded_String_Shannom = new StringBuilder();
+        for (char c : characters) {
+            String code = encoding_Table_Shannon.get(c);
+            encoded_String_Shannom.append(code);
+        }
+
+        // In chuỗi đã được mã hoá
+        System.out.println("Chuỗi đã được mã hoá shannon-Fano:");
+        System.out.println(encoded_String_Shannom.toString());
 
         // Tính hiệu suất mã hoá Shannon-Fano
         double efficiency = calculate_Efficiency(symbol_List);
         double redundancy = 1 - efficiency;
 
-        System.out.println("Hiệu suất mã hoá: " + efficiency);
-        System.out.println("Tính dư thừa: " + redundancy);
+        System.out.println("Hiệu suất mã hoá: η = " + efficiency);
+        System.out.println("Tính dư thừa: R = " + redundancy);
 
         sc.close();
     }
-
-
 }

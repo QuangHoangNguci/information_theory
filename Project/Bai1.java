@@ -15,26 +15,58 @@ public class Bai1 {
         System.out.print("Nhập số cột (N): ");
         int N = sc.nextInt();
 
-        //Khởi tạo ma trận xác suất
+        // Khởi tạo ma trận xác suất
         double[][] probability_Matrix = new double[M][N];
 
-        //Nhập các giá trị xác suất
-        for (int i =0; i< M; i++)
-        {
-            for (int j=0; j< N; j++)
-            {
-                System.out.printf("Nhập P(%d, %d): ", i, j);
-                double probability = sc.nextDouble();
-                //Kiểm tra xác suất nếu âm yêu cầu nhập lại
-                while (probability < 0)
-                {
-                    System.out.println("Không được nhập xác suất âm. Vui lòng nhập lại.");
-                    System.out.printf("Nhập P(%d, %d): ", i, j);
-                    probability = sc.nextDouble();
+        // Nhập các giá trị xác suất
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                System.out.printf("Nhập giá trị xác suất P(%d, %d): ", i, j);
+                String input = sc.next();
+
+                // Kiểm tra kiểu dữ liệu của đầu vào
+                if (input.contains("/")) {
+                    // Trường hợp là phân số dạng chuỗi
+                    String[] parts = input.split("/");
+                    int numerator = Integer.parseInt(parts[0]);
+                    int denominator = Integer.parseInt(parts[1]);
+                    double decimal = (double) numerator / denominator;
+
+                    // Kiểm tra mẫu số khác 0
+                    while (decimal < 0) {
+                        System.out.println("khong duoc < 0. Vui lòng nhập lại.");
+                        System.out.printf("Nhập giá trị xác suất P(%d, %d): ", i, j);
+                        input = sc.next();
+                        parts = input.split("/");
+                        numerator = Integer.parseInt(parts[0]);
+                        denominator = Integer.parseInt(parts[1]);
+                        decimal = (double) numerator / denominator;
+                    }
+
+                    // Gán giá trị phân số vào ma trận xác suất
+                    probability_Matrix[i][j] = decimal;
+                } else {
+
+                    // Trường hợp là số thập phân
+                    double decimal = Double.parseDouble(input);
+                    while (decimal< 0)
+                    {
+                        System.out.println("khong duoc < 0. Vui lòng nhập lại.");
+                        System.out.printf("Nhập giá trị xác suất P(%d, %d): ", i, j);
+                        decimal = sc.nextDouble();
+                    }
+
+                    // Gán giá trị số thập phân vào ma trận xác suất
+                    probability_Matrix[i][j] = decimal;
                 }
-                probability_Matrix[i][j] = probability;
+                System.out.println(probability_Matrix[i][j]);
+
             }
         }
+
+
+
+
         /*Test
         double[][] matrix_test = {
                 {0.08, 0.32, 0.4},
@@ -65,16 +97,19 @@ public class Bai1 {
 
 
         double KL_divergence_XY = cal_KL_divergence_XY(probability_Matrix);
-        System.out.println("D(X,Y) = " + String.format("%.15f", KL_divergence_XY));
+        System.out.println("D(P(x)||P(y)) = " + String.format("%.15f", KL_divergence_XY));
 
         double KL_divergence_YX = cal_KL_divergence_YX(probability_Matrix);
-        System.out.println("D(Y,X) = " + String.format("%.15f", KL_divergence_YX));
+        System.out.println("D(P(y)||P(x)) = " + String.format("%.15f", KL_divergence_YX));
 
         sc.close();
     }
 
+
+
     //Xây dựng hàm tính log2
     public static double log2(double x) {
+        if (x ==0 ) return 0;
         return Math.log(x) / Math.log(2);
     }
     public static double cal_Entropy_X(double[][] probability_Matrix){
@@ -125,14 +160,12 @@ public class Bai1 {
                 col_Sum += probability_Matrix[i][j];
             }
 
-            double col_Entropy =0;
             for (int i=0; i< M; i++){
                 if(probability_Matrix[i][j] > 0)
                 {
-                    col_Entropy -= (probability_Matrix[i][j] / col_Sum) * log2(probability_Matrix[i][j] / col_Sum);
+                    conditional_Entropy_X_Given_Y -= (probability_Matrix[i][j]) * log2(probability_Matrix[i][j] / col_Sum);
                 }
             }
-            conditional_Entropy_X_Given_Y += col_Sum * col_Entropy;
         }
 
         return conditional_Entropy_X_Given_Y;
@@ -149,14 +182,12 @@ public class Bai1 {
             {
                 row_Sum += probability_Matrix[i][j];
             }
-            double row_Entropy =0;
             for (int j=0; j< N; j++){
                 if(probability_Matrix[i][j] > 0)
                 {
-                    row_Entropy -= (probability_Matrix[i][j] / row_Sum) * log2(probability_Matrix[i][j] / row_Sum);
+                    conditional_Entropy_Y_Given_X -= (probability_Matrix[i][j]) * log2(probability_Matrix[i][j] / row_Sum);
                 }
             }
-            conditional_Entropy_Y_Given_X += row_Sum * row_Entropy;
         }
 
         return conditional_Entropy_Y_Given_X;

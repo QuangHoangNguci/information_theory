@@ -2,8 +2,6 @@ package Bai2;
 
 import java.util.*;
 
-import java.util.*;
-
 public class Symbol {
     public char c;
     public int frequency;
@@ -17,6 +15,5 @@ public class Symbol {
         this.frequency = frequency;
         this.code = "";
     }
-
 }
 
